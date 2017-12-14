@@ -1,0 +1,56 @@
+- name: is nginx already installed
+  shell: which nginx | echo $?
+  register: nginxexists
+  failed_when: nginxexists.rc not in [0, 1]
+  changed_when: False
+
+- name: Install Repository for Nginx (CentOS)
+  yum: name="{{item}}"
+  when:
+    - nginxexists.rc==0
+    - ansible_distribution_major_version=='7'
+  with_items:
+    - "http://nginx.org/packages/centos/{{ansible_distribution_major_version}}/noarch/RPMS/nginx-release-centos-{{ansible_distribution_major_version}}-0.el{{ansible_distribution_major_version}}.ngx.noarch.rpm"
+
+- name: enable repo if not
+  replace: dest="/etc/yum.repos.d/{{item}}" regexp="enabled *= *0" replace="enabled=1"
+  when: nginxexists.rc=='0'
+  with_items:
+    - nginx.repo
+
+- block:
+  - name: Create nginx Group
+    group:
+      name: "{{nginx_default_group}}"
+      gid: "{{nginx_default_groupID}}"
+
+  - name: Create nginx User
+    user:
+      name: "{{nginx_default_user}}"
+      uid: "{{nginx_default_userID}}"
+      shell: "/sbin/nologin"
+      home: "{{nginx_default_home}}"
+
+- name: Install nginx
+  yum: name=nginx
+       state=present
+  notify: disable repo
+
+- name: Create nginx Config
+  template: 
+    src: nginx.conf.j2
+    dest: "/etc/nginx/nginx.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+    force: yes
+    backup: yes
+  register: nginx_conf
+  notify:
+    - restart nginx
+
+- name: Start nginx service
+  service: name=nginx
+           state=started
+           enabled=yes
+
