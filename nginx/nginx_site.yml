@@ -1,0 +1,6 @@
+- name: Create Nginx Server
+  hosts: all
+  become: yes
+  roles:
+    - nginx
+  
