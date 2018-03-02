@@ -1,0 +1,7 @@
+server {
+    server_name "{{item.server_name}}";
+    listen "{{item.server_port}}";
+
+    include /etc/nginx/conf.d/proxy/*.conf;
+
+}
