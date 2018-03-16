@@ -44,7 +44,7 @@
 
 - name: Create nginx Proxy settings for kibana
   template: 
-    src: proxy_kibana.conf.j2
+    src: proxy_template.conf.j2
     dest: "/etc/nginx/conf.d/proxy/proxy_{{item.proxy_name}}.conf"
     owner: "root"
     group: "root"

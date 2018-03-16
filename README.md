@@ -1,0 +1,50 @@
+nginx_default_useproxy: "1"
+nginx_default_useweb: "1"
+nginx_default_usestream: "1"
+nginx_default_user: "nginx"
+nginx_default_group: "nginx"
+nginx_default_groupID: "992"
+nginx_default_userID: "992"
+nginx_default_home: "/var/cache/nginx"
+nginx_default_worker_processes: "1"
+nginx_default_log_dir: "/var/log/nginx"
+nginx_default_error_log: "error.log"
+nginx_default_errorlog_level: "warn"
+nginx_default_pid: "/var/run/nginx.pid"
+nginx_default_worker_connections: "1024"
+nginx_default_sendfile: "on"
+nginx_default_tcp_nopush: "on"
+nginx_default_keepalive_timeout: "65"
+nginx_default_gzip: "on"
+
+nginx_proxy_hosts:
+  - proxy_name: "kibana"
+    proxy_location_name: kibana
+    proxy_pass_tag: perf
+    proxy_redirect: "off"
+    proxy_max_temp_file_size: "0"
+    proxy_pass: "http://perf"
+    serverlist: 
+      - "172.21.11.147:5601 weight=5" 
+  - proxy_name: "grafana"
+    proxy_location_name: grafana
+    proxy_pass_tag: graf
+    proxy_redirect: "off"
+    proxy_max_temp_file_size: "0"
+    proxy_pass: "http://graf"
+    serverlist: 
+      - "172.21.11.147:3000 weight=5" 
+  - proxy_name: "kong"
+    proxy_location_name: api
+    proxy_pass_tag: kong
+    proxy_redirect: "off"
+    proxy_max_temp_file_size: "0"
+    proxy_pass: "http://kong"
+    serverlist: 
+      - "172.21.11.147:8000 weight=5" 
+      
+nginx_proxy_master:
+  - server_name: "172.21.11.147"
+    server_port: "80"
+
+

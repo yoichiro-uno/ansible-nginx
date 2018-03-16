@@ -19,12 +19,29 @@ nginx_default_gzip: "on"
 
 nginx_proxy_hosts:
   - proxy_name: "kibana"
+    proxy_location_name: kibana
     proxy_pass_tag: perf
     proxy_redirect: "off"
     proxy_max_temp_file_size: "0"
     proxy_pass: "http://perf"
     serverlist: 
       - "172.21.11.147:5601 weight=5" 
+  - proxy_name: "grafana"
+    proxy_location_name: grafana
+    proxy_pass_tag: graf
+    proxy_redirect: "off"
+    proxy_max_temp_file_size: "0"
+    proxy_pass: "http://graf"
+    serverlist: 
+      - "172.21.11.147:3000 weight=5" 
+  - proxy_name: "kong"
+    proxy_location_name: api
+    proxy_pass_tag: kong
+    proxy_redirect: "off"
+    proxy_max_temp_file_size: "0"
+    proxy_pass: "http://kong"
+    serverlist: 
+      - "172.21.11.147:8000 weight=5" 
 
 nginx_proxy_master:
   - server_name: "172.21.11.147"
