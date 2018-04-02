@@ -9,10 +9,6 @@
     lineinfile:
       path: "/etc/nginx/nginx.conf"
       line: "include /etc/nginx/nginx_http.conf;"
-#    when: 
-#      - nginx_conf.changed
-#      - nginx_default_useproxy=='1'
-#      - nginx_default_useweb=='1'
     register: include_http
     notify:
       - restart nginx
@@ -24,7 +20,6 @@
       owner: "root"
       group: "root"
       mode: "0644"
-  #    force: no
     register: include_http.rc=='0'
     notify:
       - restart nginx
@@ -37,9 +32,6 @@
     lineinfile:
       path: "/etc/nginx/nginx.conf"
       line: "include /etc/nginx/nginx_stream.conf;"
-#    when: 
-#      - nginx_conf.changed
-#      - nginx_default_usestream=='1'
     register: include_stream
   
   - name: Create nginx_stream.conf
@@ -49,7 +41,6 @@
       owner: "root"
       group: "root"
       mode: "0644"
-      #force: no
     register: include_stream.rc=='0'
 
   - name: Create Directory for Stream config
@@ -76,7 +67,6 @@
     with_items: "{{nginx_proxy_hosts}}"
     notify:
       - restart nginx
-#    when: nginx_default_useproxy=='1'
   
   - name: List Up Proxy Backends
     lineinfile:
@@ -90,7 +80,6 @@
           skip_missing: True
     notify:
       - restart nginx
-#    when: nginx_default_useproxy=='1'
 
   - name: Create nginx Proxy
     template: 
@@ -157,7 +146,6 @@
     with_items: "{{nginx_tcpudp_hosts}}"
     notify:
       - restart nginx
-#    when: nginx_default_useproxy=='1'
   
   - name: Listup TcpUdp Backend
     lineinfile:
@@ -171,7 +159,6 @@
           skip_missing: True
     notify:
       - restart nginx
-#    when: nginx_default_useproxy=='1'
   when: 
     - nginx_default_usestream=='1'
 
@@ -179,14 +166,3 @@
 - name: ReStart nginx service
   service: name=nginx
            state=restarted
-
-#- name: Hide nginx version info
-#  lineinfile:
-#    dest=/etc/nginx/nginx.conf
-#    backup=yes
-#    insertafter='^http {'
-#    line={{item}}
-#  with_items:
-#    - 'server_tokens off;'
-#  notify:
-#    - restart nginx
